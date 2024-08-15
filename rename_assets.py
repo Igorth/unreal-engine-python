@@ -1,6 +1,6 @@
 import unreal
 
-def rename_assets():
+def rename_assets(search_pattern, replaced_pattern, use_case):
     # Instances of unreal classes
     system_lib = unreal.SystemLibrary()
     editor_util = unreal.EditorUtilityLibrary()
@@ -21,8 +21,9 @@ def rename_assets():
         unreal.log(f"Processing asset: {asset_name}")
 
         # Check if the asset name contains the to be replaced text
-        if string_lib.contains(asset_name, search_pattern, use_case=False):
-            replaced_name = string_lib.replace(asset_name, search_pattern, replaced_pattern)
+        if string_lib.contains(asset_name, search_pattern, use_case=use_case):
+            search_case = unreal.SearchCase.CASE_SENSITIVE if use_case else unreal.SearchCase.IGNORE_CASE
+            replaced_name = string_lib.replace(asset_name, search_pattern, replaced_pattern, search_case=search_case)
             editor_util.rename_asset(asset, replaced_name)
 
             replaced += 1
@@ -32,4 +33,4 @@ def rename_assets():
 
     unreal.log(f"Renamed {replaced} assets.")
 
-rename_assets("f_", "P_")  # Replace "P_" with "F_" in selected assets
+rename_assets("f_", "P_", False)  # Replace "P_" with "F_" in selected assets
