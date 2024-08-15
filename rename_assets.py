@@ -20,5 +20,16 @@ def rename_assets():
 
         unreal.log(f"Processing asset: {asset_name}")
 
+        # Check if the asset name contains the to be replaced text
+        if string_lib.contains(asset_name, search_pattern, use_case=False):
+            replaced_name = string_lib.replace(asset_name, search_pattern, replaced_pattern)
+            editor_util.rename_asset(asset, replaced_name)
 
-rename_assets()
+            replaced += 1
+            unreal.log(f"Renamed '{asset_name}' to '{replaced_name}'.")
+        else:
+            unreal.log(f"Asset '{asset_name}' does not contain the pattern '{search_pattern}'. Skipping...")
+
+    unreal.log(f"Renamed {replaced} assets.")
+
+rename_assets("f_", "P_")  # Replace "P_" with "F_" in selected assets
