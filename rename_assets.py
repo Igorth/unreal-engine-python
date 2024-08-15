@@ -13,5 +13,12 @@ def rename_assets():
 
     unreal.log(f"Selected {num_assets} assets...")
 
+    # Loop through each selected asset
+    for asset in selected_assets:
+        # Get the asset name
+        asset_name = system_lib.get_object_name(asset)
+
+        unreal.log(f"Processing asset: {asset_name}")
+
 
 rename_assets()
