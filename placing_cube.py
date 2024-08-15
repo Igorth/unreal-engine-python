@@ -17,9 +17,15 @@ def spawn_cube(location=unreal.Vector(), rotation=unreal.Rotator()):
 
 
 def run():
-    location = unreal.Vector(30,10,400)
-    rotation = unreal.Rotator(88,-5,12)
-    spawn_cube(location, rotation)    
+
+    cube_count = 20
+
+    for i in range(cube_count):
+        circle_x_location = i * 150
+        circle_y_location = 0
+
+        location = unreal.Vector(circle_x_location, circle_y_location, 0)
+        spawn_cube(location)
 
 
 run()
