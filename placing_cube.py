@@ -28,4 +28,23 @@ def run():
         spawn_cube(location)
 
 
-run()
+def run():
+
+    cube_count = 20
+    circle_radius = 1000
+    circle_center = unreal.Vector(0, 0, 0)
+
+    for i in range(cube_count):
+        circle_x_location = circle_radius * math.cos(math.radians(i * 360 / cube_count))
+        circle_y_location = circle_radius * math.sin(math.radians(i * 360 / cube_count))
+
+        location = unreal.Vector(circle_x_location, circle_y_location, 0)
+        location_to_circle_center = location - circle_center
+
+        rotation = location_to_circle_center.quaternion().rotator()
+
+        spawn_cube(location, rotation)
+
+
+with unreal.ScopedEditorTransaction("Place cubes in a circle") as transaction:
+    run()
