@@ -5,29 +5,31 @@ def get_selected_content_browser_assets():
     selected_assets = editor_utility.get_selected_assets()
     return selected_assets
 
-def generate_new_name_for_asset(asset):
-    # Log to see the type of the asset
-    # print(f"Asset {asset.get_name()} is a {type(asset)}")
+def generate_new_name_for_asset(asset):  
+
+    rename_config = {
+        "prefixes_per_type": [
+            {"type": unreal.MaterialInstance, "prefix": "MI_"},
+            {"type": unreal.Material, "prefix": "M_"},
+            {"type": unreal.Texture, "prefix": "T_"},
+            {"type": unreal.NiagaraSystem, "prefix": "NS_"},
+        ]
+    }
 
     name = asset.get_name()
+    # Log to see the type of the asset
+    print(f"Asset {asset.get_name()} is a {type(asset)}")
 
-    # Is asset a MaterialInstance
-    if isinstance(asset, unreal.MaterialInstance) and not name.startswith("MI_"):
-        return "MI_" + asset.get_name()
+    for i in range(len(rename_config["prefixes_per_type"])):
+        prefix_config = rename_config["prefixes_per_type"][i]
+
+        prefix = prefix_config["prefix"]
+        asset_type = prefix_config["type"]
+
+        if isinstance(asset, asset_type) and not name.startswith(prefix):
+            return prefix + name
     
-    # Is asset a Material
-    if isinstance(asset, unreal.Material) and not name.startswith("M_"):
-        return "M_" + asset.get_name()
-    
-    # Is asset a Texture
-    if isinstance(asset, unreal.Texture) and not name.startswith("T_"):
-        return "T_" + asset.get_name()
-    
-    # Is asset a NiagaraSystem
-    if isinstance(asset, unreal.NiagaraSystem) and not name.startswith("NS_"):
-        return "NS_" + asset.get_name()
-    
-    return asset.get_name()
+    return name
 
 def rename_assets(assets):
     for i in range(len(assets)):
