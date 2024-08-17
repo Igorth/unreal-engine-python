@@ -28,6 +28,18 @@ def find_textures2D_in_assets(assets):
     return textures
 
 
+def create_material_instance(parent_material, asset_path, new_asset_name):
+    # Create the child material
+    asset_tools = unreal.AssetToolsHelpers.get_asset_tools()
+    material_factory = unreal.MaterialInstanceConstantFactoryNew()
+    new_asset = asset_tools.create_asset(new_asset_name, asset_path, None, material_factory)
+
+    # Assign its parent
+    unreal.MaterialEditingLibrary.set_material_instance_parent(new_asset, parent_material)
+
+    return new_asset
+
+
 def run():
     unreal.log("Running create material instances script")
 
@@ -47,6 +59,8 @@ def run():
 
     unreal.log(f"Selected material: {material.get_name()}")
     unreal.log(f"{len(textures)} textures selected")
+
+    create_material_instance(material, "/Game/Python/", "FirstMaterialInstance")
 
 
 run()
