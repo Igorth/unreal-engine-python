@@ -28,6 +28,10 @@ def find_textures2D_in_assets(assets):
     return textures
 
 
+def get_random_color():
+    return unreal.LinearColor(unreal.MathLibrary.rand_range(0, 1), unreal.MathLibrary.rand_range(0, 1), unreal.MathLibrary.rand_range(0, 1))
+
+
 def create_material_instance(parent_material, asset_path, new_asset_name):
     # Create the child material
     asset_tools = unreal.AssetToolsHelpers.get_asset_tools()
@@ -44,10 +48,20 @@ def create_material_instances_for_each_texture(material, textures):
     for texture in textures:
         unreal.log(f"Creating material instance for texture: {texture.get_name()}")
 
-        material_asset_path = "/Game/Python"
+        # material_asset_path = "/Game/Python"
+        material_asset_path = unreal.Paths.get_path(texture.get_path_name())
         material_name = f"{material.get_name()}_{texture.get_name()}"
 
         material_instance = create_material_instance(material, material_asset_path, material_name)
+
+        # Assign the texture
+        unreal.MaterialEditingLibrary.set_material_instance_texture_parameter_value(material_instance, "MainTex", texture)
+
+        # Assign a random color
+        unreal.MaterialEditingLibrary.set_material_instance_vector_parameter_value(material_instance, "Color", get_random_color())
+
+        # Save the asset
+        unreal.EditorAssetLibrary.save_asset(material_instance.get_path_name(), only_if_is_dirty=True)
 
 
 def run():
