@@ -40,6 +40,16 @@ def create_material_instance(parent_material, asset_path, new_asset_name):
     return new_asset
 
 
+def create_material_instances_for_each_texture(material, textures):
+    for texture in textures:
+        unreal.log(f"Creating material instance for texture: {texture.get_name()}")
+
+        material_asset_path = "/Game/Python"
+        material_name = f"{material.get_name()}_{texture.get_name()}"
+
+        material_instance = create_material_instance(material, material_asset_path, material_name)
+
+
 def run():
     unreal.log("Running create material instances script")
 
@@ -60,7 +70,8 @@ def run():
     unreal.log(f"Selected material: {material.get_name()}")
     unreal.log(f"{len(textures)} textures selected")
 
-    create_material_instance(material, "/Game/Python/", "FirstMaterialInstance")
+    # create_material_instance(material, "/Game/Python/", "FirstMaterialInstance")
+    create_material_instances_for_each_texture(material, textures)
 
 
 run()
