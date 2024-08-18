@@ -48,28 +48,46 @@ def create_material_instance(parent_material, asset_path, new_asset_name):
     return new_asset
 
 
+def create_material_instances_for_texture(parent_material, instance_name, texture, color):
+    unreal.log(f"Creating material instance for texture: {texture.get_name()}")
+
+    material_asset_path = unreal.Paths.get_path(texture.get_path_name())
+
+    material_instance = create_material_instance(parent_material, material_asset_path, instance_name)
+
+    # Assign the texture
+    unreal.MaterialEditingLibrary.set_material_instance_texture_parameter_value(material_instance, "MainTex", texture)
+
+    # Assign a random color
+    unreal.MaterialEditingLibrary.set_material_instance_vector_parameter_value(material_instance, "Color", color)
+
+    # Save the asset
+    unreal.EditorAssetLibrary.save_asset(material_instance.get_path_name(), only_if_is_dirty=True)
+
+    return material_instance
+
+
 def create_material_instances_for_each_texture(material, textures):
 
     material_instances = []
 
     for texture in textures:
-        unreal.log(f"Creating material instance for texture: {texture.get_name()}")
-
-        # material_asset_path = "/Game/Python"
-        material_asset_path = unreal.Paths.get_path(texture.get_path_name())
         material_name = f"{material.get_name()}_{texture.get_name()}"
-
-        material_instance = create_material_instance(material, material_asset_path, material_name)
+        material_instance = create_material_instances_for_texture(material, material_name, texture, get_random_bright_color())
         material_instances.append(material_instance)
 
-        # Assign the texture
-        unreal.MaterialEditingLibrary.set_material_instance_texture_parameter_value(material_instance, "MainTex", texture)
+    return material_instances
 
-        # Assign a random color
-        unreal.MaterialEditingLibrary.set_material_instance_vector_parameter_value(material_instance, "Color", get_random_bright_color())
 
-        # Save the asset
-        unreal.EditorAssetLibrary.save_asset(material_instance.get_path_name(), only_if_is_dirty=True)
+def create_material_instances_variations(parent_material, textures):
+    material_instances = []
+
+    for texture in textures:
+        variation_count = 10
+        for i in range(variation_count):
+            material_name = f"{parent_material.get_name()}_{texture.get_name()}_{i}"
+            material_instance = create_material_instances_for_texture(parent_material, material_name, texture, get_random_color())
+            material_instances.append(material_instance)
 
     return material_instances
 
@@ -94,12 +112,11 @@ def run():
     unreal.log(f"Selected material: {material.get_name()}")
     unreal.log(f"{len(textures)} textures selected")
 
-    # create_material_instance(material, "/Game/Python/", "FirstMaterialInstance")
-    material_instances = create_material_instances_for_each_texture(material, textures)
+    material_instances = create_material_instances_variations(material, textures)
 
-    # Open the editor for these new material instance
-    asset_tools = unreal.AssetToolsHelpers.get_asset_tools()
-    asset_tools.open_editor_for_assets((material_instances))
+    # # Open the editor for these new material instance
+    # asset_tools = unreal.AssetToolsHelpers.get_asset_tools()
+    # asset_tools.open_editor_for_assets((material_instances))
 
 
 run()
