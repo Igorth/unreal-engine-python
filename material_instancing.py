@@ -32,6 +32,10 @@ def get_random_color():
     return unreal.LinearColor(unreal.MathLibrary.rand_range(0, 1), unreal.MathLibrary.rand_range(0, 1), unreal.MathLibrary.rand_range(0, 1))
 
 
+def get_random_bright_color():
+    return unreal.LinearColor(unreal.MathLibrary.rand_range(0.5, 1), unreal.MathLibrary.rand_range(0.5, 1), unreal.MathLibrary.rand_range(0.5, 1))
+
+
 def create_material_instance(parent_material, asset_path, new_asset_name):
     # Create the child material
     asset_tools = unreal.AssetToolsHelpers.get_asset_tools()
@@ -62,7 +66,7 @@ def create_material_instances_for_each_texture(material, textures):
         unreal.MaterialEditingLibrary.set_material_instance_texture_parameter_value(material_instance, "MainTex", texture)
 
         # Assign a random color
-        unreal.MaterialEditingLibrary.set_material_instance_vector_parameter_value(material_instance, "Color", get_random_color())
+        unreal.MaterialEditingLibrary.set_material_instance_vector_parameter_value(material_instance, "Color", get_random_bright_color())
 
         # Save the asset
         unreal.EditorAssetLibrary.save_asset(material_instance.get_path_name(), only_if_is_dirty=True)
