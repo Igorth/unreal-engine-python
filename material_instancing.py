@@ -45,6 +45,9 @@ def create_material_instance(parent_material, asset_path, new_asset_name):
 
 
 def create_material_instances_for_each_texture(material, textures):
+
+    material_instances = []
+
     for texture in textures:
         unreal.log(f"Creating material instance for texture: {texture.get_name()}")
 
@@ -53,6 +56,7 @@ def create_material_instances_for_each_texture(material, textures):
         material_name = f"{material.get_name()}_{texture.get_name()}"
 
         material_instance = create_material_instance(material, material_asset_path, material_name)
+        material_instances.append(material_instance)
 
         # Assign the texture
         unreal.MaterialEditingLibrary.set_material_instance_texture_parameter_value(material_instance, "MainTex", texture)
@@ -62,6 +66,8 @@ def create_material_instances_for_each_texture(material, textures):
 
         # Save the asset
         unreal.EditorAssetLibrary.save_asset(material_instance.get_path_name(), only_if_is_dirty=True)
+
+    return material_instances
 
 
 def run():
@@ -85,7 +91,11 @@ def run():
     unreal.log(f"{len(textures)} textures selected")
 
     # create_material_instance(material, "/Game/Python/", "FirstMaterialInstance")
-    create_material_instances_for_each_texture(material, textures)
+    material_instances = create_material_instances_for_each_texture(material, textures)
+
+    # Open the editor for these new material instance
+    asset_tools = unreal.AssetToolsHelpers.get_asset_tools()
+    asset_tools.open_editor_for_assets((material_instances))
 
 
 run()
